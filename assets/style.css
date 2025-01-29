@@ -1,0 +1,43 @@
+/* Style for active tab */
+#card-tabs .nav-link.active {
+    background-color: #ABCE78 !important;
+    /* Green for active tab */
+    color: white !important;
+    /* Text color for active tab */
+}
+
+/* Style for non-active (inactive) tabs */
+#card-tabs .nav-link {
+    background-color: #f8f9fa;
+    /* Light grey background for inactive tabs */
+    color: #495057;
+    /* Dark text color for inactive tabs */
+    border-color: transparent;
+    /* Remove border */
+}
+
+/* Hover effect for inactive tabs */
+#card-tabs .nav-link:hover {
+    background-color: #e2e6ea;
+    /* Slightly darker grey for hover state */
+}
+
+/* Set the width for the tab labels */
+.custom-tab .nav-link {
+    width: 300px;
+    text-align: center;
+}
+
+/* Targeting the uploader container */
+.custom-uploader .dash-uploader {
+    height: 30px !important;
+    /* Adjust uploader height */
+}
+
+/* Reduce font size inside the uploader */
+.custom-uploader .dash-uploader-text {
+    font-size: 12px !important;
+    /* Adjust the font size */
+    line-height: 30px;
+    /* Adjust line height to center text vertically */
+}
