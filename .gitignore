@@ -3,3 +3,4 @@ plotly_dash/
 transcription+report.docx
 comparision.txt
 app_working.py
+.env 
