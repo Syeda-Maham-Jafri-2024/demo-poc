@@ -5,8 +5,11 @@ import soundfile as sf
 from pydub import AudioSegment
 import os
 
-import whisper
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 def convert_to_wav(input_audio_path):
 
@@ -93,6 +96,7 @@ def audio_to_text_with_openai(input_audio_path):
         wav_audio_path, processed_audio_path, target_sample_rate=16000
     )
     print(f"Audio passed to whisper model: {processed_audio_path}")
+    
     # ---------------------chunking the audio ---------------------------------------
     audio_length = AudioSegment.from_file(audio_path).duration_seconds
     print(f"Audio length: {audio_length} seconds")
@@ -103,7 +107,7 @@ def audio_to_text_with_openai(input_audio_path):
     else:
         chunked_audio_paths = [audio_path]
 
-    client = OpenAI(api_key="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")
+    client = OpenAI(api_key=openai_api_key)
     full_transcription = ""
 
     start_time = time.time()

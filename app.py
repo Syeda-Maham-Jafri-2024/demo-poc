@@ -9,14 +9,12 @@ from code_files.audio_transcription import audio_to_text_with_openai
 from code_files.report_generation import generate_report_with_ai
 
 
-# Initialize the app with Bootstrap theme
 app = dash.Dash(
     __name__,
     external_stylesheets=[dbc.themes.BOOTSTRAP],
     suppress_callback_exceptions=True,
 )
 du.configure_upload(app, folder="uploads")
-# Custom CSS for Navbar Height and Font Size
 app.css.append_css(
     {
         "external_url": "https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -34,7 +32,6 @@ navbar_custom_css = {
 card_1 = dbc.Card(
     dbc.CardBody(
         [
-            # Doctor Profile Section
             html.Div(
                 [
                     html.Img(
@@ -103,7 +100,6 @@ card_1 = dbc.Card(
                 },
             ),
             html.Hr(style={"marginBottom": "10px", "marginTop": "10px"}),
-            # Transcribe Audios Section
             html.Div(
                 [
                     html.H6(
@@ -126,7 +122,6 @@ card_1 = dbc.Card(
                 ],
                 style={"marginBottom": "10px"},
             ),
-            # Today Section
             html.H6(
                 "TODAY",
                 style={"fontSize": "12px", "color": "gray", "marginBottom": "10px"},
@@ -168,7 +163,6 @@ card_1 = dbc.Card(
                     ),
                 ]
             ),
-            # Last Week Section
             html.H6(
                 "LAST WEEK",
                 style={
@@ -220,7 +214,6 @@ card_1 = dbc.Card(
                 style={"fontWeight": "bold", "fontSize": "15px", "marginTop": "20px"},
             ),
             html.Hr(style={"marginBottom": "15px", "marginTop": "127px"}),
-            # Footer: Settings and Contact Us
             html.Div(
                 [
                     html.Div(
@@ -253,7 +246,6 @@ card_2 = dbc.Card(
     dbc.CardBody(
         [
             html.H5("Patient Record", className="card-title"),
-            # Tabs Component
             dcc.Tabs(
                 id="tabs",
                 value="audio",
@@ -265,7 +257,7 @@ card_2 = dbc.Card(
                         style={
                             "padding": "5px",
                             "fontSize": "14px",
-                            "backgroundColor": "#f0f0f0",  # Light gray background
+                            "backgroundColor": "#f0f0f0",  
                             "marginRight": "2px",
                             "textAlign": "center",
                             "cursor": "pointer",
@@ -277,9 +269,9 @@ card_2 = dbc.Card(
                             "backgroundColor": "#ABCE78",
                             "color": "white",
                             "borderRadius": "5px",
-                            "transform": "scale(1.05)",  # Slightly increase size on selection
+                            "transform": "scale(1.05)",  
                             "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.2)",
-                            "borderTop": "none",  # Remove the top border
+                            "borderTop": "none",  
                         },
                         children=[
                             dbc.Card(
@@ -408,9 +400,9 @@ card_2 = dbc.Card(
                                                                                 "color": "green",
                                                                                 "font-size": "12px",
                                                                                 "padding-top": "4px",
-                                                                                "text-align": "center",  # Horizontal centering
-                                                                                "display": "flex",  # Enable flexbox
-                                                                                "align-items": "center",  # Vertical centering
+                                                                                "text-align": "center",  
+                                                                                "display": "flex",  
+                                                                                "align-items": "center",  
                                                                                 "justify-content": "center",
                                                                             },
                                                                         ),
@@ -503,7 +495,7 @@ card_2 = dbc.Card(
                         style={
                             "padding": "5px",
                             "fontSize": "14px",
-                            "backgroundColor": "#f0f0f0",  # Light gray background
+                            "backgroundColor": "#f0f0f0",  
                             "marginRight": "2px",
                             "textAlign": "center",
                             "borderRadius": "5px",
@@ -515,9 +507,9 @@ card_2 = dbc.Card(
                             "backgroundColor": "#ABCE78",
                             "color": "white",
                             "borderRadius": "5px",
-                            "transform": "scale(1.05)",  # Slightly increase size on selection
+                            "transform": "scale(1.05)",  
                             "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.2)",
-                            "borderTop": "none",  # Remove the top border
+                            "borderTop": "none",  
                         },
                         children=[
                             dbc.Card(
@@ -538,7 +530,7 @@ card_2 = dbc.Card(
                                                                             "font-size": "13px",
                                                                         },
                                                                     ),
-                                                                    md=10,  # Adjust the width for the heading
+                                                                    md=10,  
                                                                 ),
                                                                 dbc.Col(
                                                                     dbc.Button(
@@ -558,7 +550,7 @@ card_2 = dbc.Card(
                                                                             "transition": "all 0.3s ease",
                                                                         },
                                                                     ),
-                                                                    md=2,  # Adjust the width for the button
+                                                                    md=2,  
                                                                     style={
                                                                         "text-align": "center"
                                                                     },
@@ -576,7 +568,7 @@ card_2 = dbc.Card(
                                                         dbc.Spinner(
                                                             html.Div(
                                                                 id="transcription-output",
-                                                                contentEditable=True,  # Makes the div editable
+                                                                contentEditable=True,  
                                                                 style={
                                                                     "white-space": "pre-wrap",
                                                                     "border": "1px solid #ccc",
@@ -588,22 +580,7 @@ card_2 = dbc.Card(
                                                                     "overflow": "auto",
                                                                 },
                                                             ),
-                                                            # html.Textarea(
-                                                            #     id="transcription-output",
-                                                            #     style={
-                                                            #         "white-space": "pre-wrap",
-                                                            #         "border": "1px solid #ccc",
-                                                            #         "padding": "10px",
-                                                            #         "border-radius": "5px",
-                                                            #         "background-color": "#f9f9f9",
-                                                            #         "font-size": "11px",
-                                                            #         "height": "150px",
-                                                            #         "overflow": "auto",
-                                                            #         "width": "100%",  # Ensures the textarea takes up the full width
-                                                            #     },
-                                                            #     children="Click the Transcribe button to transcribe the uploaded audio.",
-                                                            #     readOnly=False,  # Ensures the field is editable
-                                                            # ),
+                                                            
                                                             size="md",
                                                             color="primary",
                                                             spinner_style={
@@ -682,7 +659,7 @@ card_2 = dbc.Card(
                         style={
                             "padding": "5px",
                             "fontSize": "14px",
-                            "backgroundColor": "#f0f0f0",  # Light gray background
+                            "backgroundColor": "#f0f0f0",  
                             "marginRight": "2px",
                             "textAlign": "center",
                             "cursor": "pointer",
@@ -694,9 +671,9 @@ card_2 = dbc.Card(
                             "backgroundColor": "#ABCE78",
                             "color": "white",
                             "borderRadius": "5px",
-                            "transform": "scale(1.05)",  # Slightly increase size on selection
+                            "transform": "scale(1.05)",  
                             "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.2)",
-                            "borderTop": "none",  # Remove the top border
+                            "borderTop": "none",  
                         },
                         children=[
                             dbc.Card(
@@ -1281,8 +1258,8 @@ card_2 = dbc.Card(
                                                                 "font-size": "11px",
                                                                 "margin": "0px 0px 3px 9px",
                                                                 "width": "90%",
-                                                                "height": "auto",  # Dynamic height adjustment
-                                                                "resize": "both",  # Allow manual resizing if needed
+                                                                "height": "auto",  
+                                                                "resize": "both",  
                                                                 "overflow": "hidden",
                                                             },
                                                         ),
@@ -1315,7 +1292,7 @@ card_2 = dbc.Card(
                                     "backgroundColor": "#f0f0f0",
                                     "borderRadius": "5px",
                                     "padding": "5px",
-                                    "minHeight": "75vh",
+                                    "minHeight": "70vh",
                                 },
                             ),
                         ],
@@ -1324,7 +1301,7 @@ card_2 = dbc.Card(
                 style={
                     "borderRadius": "5px",
                     "backgroundColor": "#f8f9fa",
-                    "minHeight": "10px",
+                    "minHeight": "7px",
                 },
             ),
             html.Div(id="tabs-content", style={"marginTop": "20px"}),
@@ -1420,21 +1397,19 @@ def get_latest_file_from_folder(folder_path):
     return latest_file
 
 
-# Callback to transcribe the audio file
 @app.callback(
     Output("transcription-output", "children"),
-    # Output("transcription-output", "value"),
     Input("transcribe-button", "n_clicks"),
 )
 def transcribe_recorded_audio(n_clicks):
     if n_clicks > 0:
         latest_recorded_file = get_latest_file_from_folder(
-            folder_path=r"C:\Users\user\Desktop\Tasks\SIAG_ReportGenerationTask\uploads"
+            folder_path=r"uploads"
         )
         print(latest_recorded_file)
         if latest_recorded_file:
             file_path = os.path.join(
-                r"C:\Users\user\Desktop\Tasks\SIAG_ReportGenerationTask\uploads",
+                r"uploads",
                 latest_recorded_file,
             )
             if os.path.exists(file_path):
@@ -1500,7 +1475,6 @@ def handle_upload(file_names, is_completed):
 
 @app.callback(
     Output("transcription-output", "children", allow_duplicate=True),
-    # Output("transcription-output", "value", allow_duplicate=True),
     Input("transcribe-button", "n_clicks"),
     State("uploader", "fileNames"),
     prevent_initial_call="initial_duplicate",
@@ -1554,7 +1528,6 @@ from dash import no_update
     ],
     Input("populate-form-btn", "n_clicks"),
     State("transcription-output", "children"),
-    # State("transcription-output", "value"),
     State("additional-comments", "value"),
 )
 def generate_uploaded_audio_report(n_clicks, transcription, additional_comments):
@@ -1607,5 +1580,4 @@ def generate_uploaded_audio_report(n_clicks, transcription, additional_comments)
 
 
 if __name__ == "__main__":
-    # app.run_server(debug=True)
     app.run_server()
