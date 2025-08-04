@@ -1,0 +1,32 @@
+Audio Tab:
+1. Audio Upload --> Click on the upload audio button which opens a windows file picker, select an audio file and upload
+                    it to the application
+                --> if audio not in wav then the audio is converted to wav first and the converted audio is saved in
+                    output_files/audio_outputs/converted_audios
+                --> Once we have the audio in wav format we start preprocessing the audio by trimming silences, normalizing
+                    the audio, reducing background noise, applying a bandpass filter. 
+                --> the processed audio is then picked and chunked with length of 5 mins, and now this processed chunked 
+                    audio is then saved at output_files/audio_outputs/processed_audio
+    at this point on the screen the user can see the message that the audio has been uploaded and then the user can
+    also use the audio player to play & listen the audio to ensure that the correct audio was uploaded.
+2. Audio Record --> Click on the Start Recording button displays a message to the user that the recording has started 
+                --> to stop the recording the user needs to click on the stop recording button which again displays a 
+                    message to the user to notify them that the recording has stopped.
+                --> the user can again use the audio player to hear their recording.
+Transcribe Tab:
+1. Click on Transcribe --> inorder to view the transcription of their vedio the user clicks on the transcribe button
+                           the audio is then sent for transcription and later displayed to them
+2. Click on Magic Wand --> Sometimes the words from the audio may not properly be captured by the transcription model
+                           and hence when transcribed they are either mispelled or are gramatically incorrect. The Magic
+                           wand button takes in the user's audio transcription and improves such misspelled word according
+                           to the terms used in ERCP domain.
+3. Additional Comments --> There may be cases when the doctor might miss out mentioning something during the surgery like 
+                           the necessary precautions that the user should follow up with post surgery, basically the do's
+                           and dont's etc, they can add those missed out information in this section
+Report Generation Tab:
+1. Click on Generate Report --> Here the user can see the default surgery report form which the doctor's previously used to
+                                fill out manually previously after every surgery. Now the doctor can just click on the 
+                                "Generate Report" button and in some time the fields in the repot form get automatically
+                                filled based on the information present in the doctor's surgery audio transcription
+
+          

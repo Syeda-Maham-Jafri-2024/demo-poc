@@ -8,6 +8,7 @@ import os
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
+
 def generate_report_with_ai(transcribed_text, comments):
 
     client = OpenAI(api_key=openai_api_key)
@@ -94,7 +95,6 @@ def generate_report_with_ai(transcribed_text, comments):
             description="Give a brief summary of the entire procedure carried out",
         )
 
-    # Prompt for GPT model
     prompt = (
         "Extract the relevant medical details and structure them based on the "
         "provided schema for ERCP reports:\n\n"
@@ -112,4 +112,3 @@ def generate_report_with_ai(transcribed_text, comments):
 
     event = completion.choices[0].message.parsed
     return event
-

@@ -6,13 +6,16 @@ import dash_bootstrap_components as dbc
 import dash_uploader as du
 from pydub import AudioSegment
 from code_files.audio_transcription import audio_to_text_with_openai
+from code_files.improve_transcription import correct_ercp_transcription
 from code_files.report_generation import generate_report_with_ai
-
+from dash_iconify import DashIconify
+from dash import no_update
 
 app = dash.Dash(
     __name__,
     external_stylesheets=[dbc.themes.BOOTSTRAP],
     suppress_callback_exceptions=True,
+    title="Audio Report Generator",
 )
 du.configure_upload(app, folder="uploads")
 app.css.append_css(
@@ -257,7 +260,7 @@ card_2 = dbc.Card(
                         style={
                             "padding": "5px",
                             "fontSize": "14px",
-                            "backgroundColor": "#f0f0f0",  
+                            "backgroundColor": "#f0f0f0",
                             "marginRight": "2px",
                             "textAlign": "center",
                             "cursor": "pointer",
@@ -269,14 +272,15 @@ card_2 = dbc.Card(
                             "backgroundColor": "#ABCE78",
                             "color": "white",
                             "borderRadius": "5px",
-                            "transform": "scale(1.05)",  
+                            "transform": "scale(1.05)",
                             "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.2)",
-                            "borderTop": "none",  
+                            "borderTop": "none",
                         },
                         children=[
                             dbc.Card(
                                 dbc.CardBody(
                                     [
+                                        dcc.Store(id="audio-source", data=None),
                                         html.P(
                                             "Upload your audio or click on the Start Recording button to record your Audio",
                                             className="card-text",
@@ -400,9 +404,9 @@ card_2 = dbc.Card(
                                                                                 "color": "green",
                                                                                 "font-size": "12px",
                                                                                 "padding-top": "4px",
-                                                                                "text-align": "center",  
-                                                                                "display": "flex",  
-                                                                                "align-items": "center",  
+                                                                                "text-align": "center",
+                                                                                "display": "flex",
+                                                                                "align-items": "center",
                                                                                 "justify-content": "center",
                                                                             },
                                                                         ),
@@ -495,7 +499,7 @@ card_2 = dbc.Card(
                         style={
                             "padding": "5px",
                             "fontSize": "14px",
-                            "backgroundColor": "#f0f0f0",  
+                            "backgroundColor": "#f0f0f0",
                             "marginRight": "2px",
                             "textAlign": "center",
                             "borderRadius": "5px",
@@ -507,9 +511,9 @@ card_2 = dbc.Card(
                             "backgroundColor": "#ABCE78",
                             "color": "white",
                             "borderRadius": "5px",
-                            "transform": "scale(1.05)",  
+                            "transform": "scale(1.05)",
                             "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.2)",
-                            "borderTop": "none",  
+                            "borderTop": "none",
                         },
                         children=[
                             dbc.Card(
@@ -530,32 +534,56 @@ card_2 = dbc.Card(
                                                                             "font-size": "13px",
                                                                         },
                                                                     ),
-                                                                    md=10,  
+                                                                    md=9,
                                                                 ),
                                                                 dbc.Col(
-                                                                    dbc.Button(
-                                                                        "Transcribe",
-                                                                        id="transcribe-button",
-                                                                        n_clicks=0,
-                                                                        className="mb-2",
-                                                                        style={
-                                                                            "background-color": "#90D2E5",
-                                                                            "color": "white",
-                                                                            "font-size": "12px",
-                                                                            "font-weight": "500",
-                                                                            "padding": "7px 20px",
-                                                                            "border-radius": "25px",
-                                                                            "border": "none",
-                                                                            "box-shadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",
-                                                                            "transition": "all 0.3s ease",
-                                                                        },
+                                                                    dbc.ButtonGroup(  # Groups the buttons together
+                                                                        [
+                                                                            dbc.Button(
+                                                                                "Transcribe",
+                                                                                id="transcribe-button",
+                                                                                n_clicks=0,
+                                                                                className="mb-2",
+                                                                                style={
+                                                                                    "background-color": "#90D2E5",
+                                                                                    "color": "white",
+                                                                                    "font-size": "12px",
+                                                                                    "font-weight": "500",
+                                                                                    "padding": "7px 20px",
+                                                                                    "border-radius": "25px",
+                                                                                    "margin-right": "5px",
+                                                                                    "border": "none",
+                                                                                    "box-shadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                                                                                    "transition": "all 0.3s ease",
+                                                                                },
+                                                                            ),
+                                                                            dbc.Button(
+                                                                                DashIconify(
+                                                                                    icon="mdi:magic-wand",
+                                                                                    width=18,
+                                                                                ),
+                                                                                id="magic-btn",
+                                                                                n_clicks=0,
+                                                                                className="mb-2",
+                                                                                style={
+                                                                                    "background-color": "#A8D5BA",
+                                                                                    "color": "white",
+                                                                                    "font-size": "12px",
+                                                                                    "font-weight": "500",
+                                                                                    "padding": "7px 15px",
+                                                                                    "border-radius": "25px",
+                                                                                    "border": "none",
+                                                                                    "box-shadow": "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                                                                                    "transition": "all 0.3s ease",
+                                                                                },
+                                                                            ),
+                                                                        ],
+                                                                        className="d-flex",
                                                                     ),
-                                                                    md=2,  
-                                                                    style={
-                                                                        "text-align": "center"
-                                                                    },
+                                                                    width="auto",
                                                                 ),
-                                                            ]
+                                                            ],
+                                                            justify="between",
                                                         ),
                                                         html.P(
                                                             "View the transcription of your audio here",
@@ -568,7 +596,7 @@ card_2 = dbc.Card(
                                                         dbc.Spinner(
                                                             html.Div(
                                                                 id="transcription-output",
-                                                                contentEditable=True,  
+                                                                contentEditable=True,
                                                                 style={
                                                                     "white-space": "pre-wrap",
                                                                     "border": "1px solid #ccc",
@@ -580,7 +608,6 @@ card_2 = dbc.Card(
                                                                     "overflow": "auto",
                                                                 },
                                                             ),
-                                                            
                                                             size="md",
                                                             color="primary",
                                                             spinner_style={
@@ -659,7 +686,7 @@ card_2 = dbc.Card(
                         style={
                             "padding": "5px",
                             "fontSize": "14px",
-                            "backgroundColor": "#f0f0f0",  
+                            "backgroundColor": "#f0f0f0",
                             "marginRight": "2px",
                             "textAlign": "center",
                             "cursor": "pointer",
@@ -671,9 +698,9 @@ card_2 = dbc.Card(
                             "backgroundColor": "#ABCE78",
                             "color": "white",
                             "borderRadius": "5px",
-                            "transform": "scale(1.05)",  
+                            "transform": "scale(1.05)",
                             "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.2)",
-                            "borderTop": "none",  
+                            "borderTop": "none",
                         },
                         children=[
                             dbc.Card(
@@ -1258,11 +1285,42 @@ card_2 = dbc.Card(
                                                                 "font-size": "11px",
                                                                 "margin": "0px 0px 3px 9px",
                                                                 "width": "90%",
-                                                                "height": "auto",  
-                                                                "resize": "both",  
+                                                                "height": "auto",
+                                                                "resize": "both",
                                                                 "overflow": "hidden",
                                                             },
                                                         ),
+                                                        # dbc.Col(
+                                                        #     dbc.Textarea(
+                                                        #         id="conclusion",
+                                                        #         value="No",
+                                                        #         style={
+                                                        #             "font-size": "11px",
+                                                        #             "margin": "0px 0px 2px 5px",
+                                                        #             "width": "90%",
+                                                        #             "height": "auto",
+                                                        #             "resize": "both",
+                                                        #             "overflow": "hidden",
+                                                        #         },
+                                                        #     ),
+                                                        #     width=11,
+                                                        # ),
+                                                        # dbc.Col(
+                                                        #     dbc.Button(
+                                                        #         html.I(
+                                                        #             className="bi bi-mic"
+                                                        #         ),  # Bootstrap Icon for Microphone
+                                                        #         id="microphone-button",
+                                                        #         color="primary",
+                                                        #         outline=True,
+                                                        #         style={
+                                                        #             "padding": "2px 5px",
+                                                        #             "font-size": "12px",
+                                                        #             "margin-left": "-4px",
+                                                        #         },
+                                                        #     ),
+                                                        #     width="auto",
+                                                        # ),
                                                     ]
                                                 ),
                                             ]
@@ -1305,7 +1363,8 @@ card_2 = dbc.Card(
                 },
             ),
             html.Div(id="tabs-content", style={"marginTop": "20px"}),
-        ]
+        ],
+        style={"height": "790px", "overflow": "auto"},
     )
 )
 
@@ -1325,32 +1384,6 @@ app.layout = dbc.Container(
 
 
 # ---------------------------------------------------------------- client side call-backs -----------------------------------------------------------------
-# Client-side callbacks
-# app.clientside_callback(
-#     """
-#     function(n_clicks) {
-#         if (n_clicks > 0) {
-#             startRecording();
-#         }
-#         return null;
-#     }
-#     """,
-#     Output("record-start", "n_clicks"),
-#     Input("record-start", "n_clicks"),
-# )
-
-# app.clientside_callback(
-#     """
-#     function(n_clicks) {
-#         if (n_clicks > 0) {
-#             stopRecording();
-#         }
-#         return null;
-#     }
-#     """,
-#     Output("record-stop", "n_clicks"),
-#     Input("record-stop", "n_clicks"),
-# )
 
 app.clientside_callback(
     """
@@ -1388,7 +1421,6 @@ def get_latest_file_from_folder(folder_path):
         for f in os.listdir(folder_path)
         if os.path.isfile(os.path.join(folder_path, f))
     ]
-
     if not files:
         return None
     latest_file = max(
@@ -1398,25 +1430,30 @@ def get_latest_file_from_folder(folder_path):
 
 
 @app.callback(
-    Output("transcription-output", "children"),
-    Input("transcribe-button", "n_clicks"),
+    Output("audio-source", "children"),
+    Output("audio-source", "data"),
+    Input("record-start", "n_clicks"),
+    Input("uploader", "isCompleted"),
+    State("uploader", "fileNames"),
+    prevent_initial_call=True,
 )
-def transcribe_recorded_audio(n_clicks):
-    if n_clicks > 0:
-        latest_recorded_file = get_latest_file_from_folder(
-            folder_path=r"uploads"
+def set_audio_source(n_record_clicks, is_completed, file_names):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        return dash.no_update
+
+    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
+    if button_id == "record-start":
+        return "Audio Source: recorded", ("recorded", None)
+
+    elif is_completed and file_names:
+        return f"Audio Source: uploaded, File: {file_names[0]}", (
+            "uploaded",
+            file_names[0],
         )
-        print(latest_recorded_file)
-        if latest_recorded_file:
-            file_path = os.path.join(
-                r"uploads",
-                latest_recorded_file,
-            )
-            if os.path.exists(file_path):
-                transcription = audio_to_text_with_openai(file_path)
-                return transcription
-        return "Error: Unable to locate the uploaded file for transcription."
-    return "Click the Transcribe button to transcribe the uploaded audio."
+
+    return dash.no_update
 
 
 # -------------------------------------------------- server side callbacks -----------------------------------------------------------------------
@@ -1474,30 +1511,124 @@ def handle_upload(file_names, is_completed):
 
 
 @app.callback(
-    Output("transcription-output", "children", allow_duplicate=True),
-    Input("transcribe-button", "n_clicks"),
-    State("uploader", "fileNames"),
-    prevent_initial_call="initial_duplicate",
+    Output("transcription-output", "children"),
+    [Input("transcribe-button", "n_clicks"), Input("magic-btn", "n_clicks")],
+    State("audio-source", "data"),
+    State("transcription-output", "children"),
 )
-def transcribe_uploaded_audio(n_clicks, file_names):
-    if n_clicks > 0 and file_names:
-        latest_folder = get_latest_subfolder("uploads")
-        if latest_folder:
-            file_path = os.path.join(latest_folder, file_names[0])
-            if os.path.exists(file_path):
-                transcription = audio_to_text_with_openai(file_path)
-                transcript_path = os.path.join(
-                    r"output_files\text_outputs\transcriptions",
-                    "transcript.txt",
-                )
-                with open(transcript_path, "w") as f:
-                    f.write(transcription)
-                return transcription
-        return "Error: Unable to locate the uploaded file for transcription."
-    return "Click the Transcribe button to transcribe the uploaded audio."
+def handle_transcription(transcribe_clicks, magic_clicks, audio_data, current_text):
+    ctx = dash.callback_context
+
+    if not ctx.triggered:
+        return current_text
+
+    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
+    if button_id == "transcribe-button":
+        if not audio_data:
+            return "Click the Transcribe button to transcribe the uploaded audio."
+
+        audio_source, file_name = audio_data
+
+        if audio_source == "recorded" and transcribe_clicks:
+            latest_recorded_file = get_latest_file_from_folder(folder_path=r"uploads")
+            if latest_recorded_file:
+                file_path = os.path.join(r"uploads", latest_recorded_file)
+                if os.path.exists(file_path):
+                    return audio_to_text_with_openai(file_path)
+                # NOTE: need to write down the text transcription for the recording process as well
+            return "Error: Unable to locate the recorded file for transcription."
+
+        elif audio_source == "uploaded" and transcribe_clicks and file_name:
+            latest_folder = get_latest_subfolder("uploads")
+            if latest_folder:
+                file_path = os.path.join(latest_folder, file_name)
+                if os.path.exists(file_path):
+                    transcription = audio_to_text_with_openai(file_path)
+                    transcript_path = os.path.join(
+                        r"output_files\text_outputs\transcriptions",
+                        "transcript.txt",
+                    )
+                    with open(transcript_path, "w") as f:
+                        f.write(transcription)
+                    return transcription
+            return "Error: Unable to locate the uploaded file for transcription."
+
+    elif button_id == "magic-btn":
+        if magic_clicks and current_text:
+            corrected_transcription = correct_ercp_transcription(current_text)
+
+            # Save corrected transcription to a file
+            corrected_transcript_path = os.path.join(
+                r"output_files\text_outputs\transcriptions",
+                "corrected_transcript.txt",
+            )
+            with open(corrected_transcript_path, "w") as f:
+                f.write(corrected_transcription)
+
+            return corrected_transcription
+
+        return "No transcription available to improve."
+
+    return current_text
 
 
-from dash import no_update
+# @app.callback(
+#     Output("transcription-output", "children"),
+#     Input("transcribe-button", "n_clicks"),
+#     State("audio-source", "data"),
+# )
+# def transcribe_audio(n_clicks, audio_data):
+#     # print("hello")
+#     # print("Audio Data:", audio_data)
+#     if not audio_data:
+#         return "Click the Transcribe button to transcribe the uploaded audio."
+
+#     audio_source, file_name = audio_data
+#     if audio_source == "recorded":
+#         if n_clicks > 0:
+#             latest_recorded_file = get_latest_file_from_folder(folder_path=r"uploads")
+#             print("Latest Recorded File:", latest_recorded_file)
+
+#             if latest_recorded_file:
+#                 file_path = os.path.join(r"uploads", latest_recorded_file)
+#                 if os.path.exists(file_path):
+#                     transcription = audio_to_text_with_openai(file_path)
+#                     return transcription
+#             return "Error: Unable to locate the recorded file for transcription."
+#         return "Click the Transcribe button to transcribe the recorded audio."
+
+#     elif audio_source == "uploaded":
+#         if n_clicks > 0 and file_name:
+#             latest_folder = get_latest_subfolder("uploads")
+#             print("Latest Folder:", latest_folder)
+
+#             if latest_folder:
+#                 file_path = os.path.join(latest_folder, file_name)
+#                 if os.path.exists(file_path):
+#                     transcription = audio_to_text_with_openai(file_path)
+#                     transcript_path = os.path.join(
+#                         r"output_files\text_outputs\transcriptions",
+#                         "transcript.txt",
+#                     )
+#                     with open(transcript_path, "w") as f:
+#                         f.write(transcription)
+#                     return transcription
+#             return "Error: Unable to locate the uploaded file for transcription."
+#         return "Click the Transcribe button to transcribe the uploaded audio."
+
+
+# # @app.callback(
+# #     Output("transcription-output", "children"),
+# #     Input("magic-btn", "n_clicks"),
+# #     State("transcription-output", "children"),
+# # )
+# # def update_transcription(n_clicks, current_text):
+# #     if n_clicks is None or n_clicks == 0:
+# #         return current_text
+# #     if current_text:
+# #         return correct_ercp_transcription(current_text)
+# #     return "No transcription available to improve."
 
 
 @app.callback(

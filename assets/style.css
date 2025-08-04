@@ -1,3 +1,5 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css');
+
 /* Style for active tab */
 #card-tabs .nav-link.active {
     background-color: #ABCE78 !important;
@@ -40,4 +42,27 @@
     /* Adjust the font size */
     line-height: 30px;
     /* Adjust line height to center text vertically */
+}
+
+
+/* Targeting the microphone button using its ID */
+#microphone-button {
+    background-color: #3498db !important; /* Blue shade */
+    color: white !important;
+    border: none !important;
+    padding: 8px !important;
+    border-radius: 50% !important; /* Makes it circular */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+}
+
+/* Hover & Active Effects */
+#microphone-button:hover {
+    background-color: #2980b9 !important; /* Darker blue on hover */
+    transform: scale(1.05); /* Slightly enlarges */
+}
+
+#microphone-button:active {
+    background-color: #1c6692 !important; /* Even darker blue on press */
+    transform: scale(0.95); /* Slightly shrinks */
 }

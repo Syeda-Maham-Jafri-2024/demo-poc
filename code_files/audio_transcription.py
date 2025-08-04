@@ -4,12 +4,15 @@ from scipy.signal import butter, lfilter
 import soundfile as sf
 from pydub import AudioSegment
 import os
+import requests
 
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
+groq_api_key = os.getenv("GROQ_API_KEY")
+
 
 def convert_to_wav(input_audio_path):
 
@@ -96,7 +99,7 @@ def audio_to_text_with_openai(input_audio_path):
         wav_audio_path, processed_audio_path, target_sample_rate=16000
     )
     print(f"Audio passed to whisper model: {processed_audio_path}")
-    
+
     # ---------------------chunking the audio ---------------------------------------
     audio_length = AudioSegment.from_file(audio_path).duration_seconds
     print(f"Audio length: {audio_length} seconds")
@@ -107,19 +110,41 @@ def audio_to_text_with_openai(input_audio_path):
     else:
         chunked_audio_paths = [audio_path]
 
-    client = OpenAI(api_key=openai_api_key)
+    # client = OpenAI(api_key=openai_api_key)
+    # full_transcription = ""
+
+    # start_time = time.time()
+    # for chunk_path in chunked_audio_paths:
+
+    #     print(f"Transcribing chunk: {chunk_path}")
+
+    #     with open(chunk_path, "rb") as audio_file:
+    #         transcription = client.audio.translations.create(
+    #             model="whisper-1", file=audio_file
+    #         )
+    #     full_transcription += transcription.text + "\n"
+
+    #   ------------------------------------------------------------------------------
+    url = "https://api.groq.com/openai/v1/audio/transcriptions"
+    print(groq_api_key)
+    headers = {"Authorization": f"Bearer {groq_api_key}"}
     full_transcription = ""
 
     start_time = time.time()
     for chunk_path in chunked_audio_paths:
-
         print(f"Transcribing chunk: {chunk_path}")
 
         with open(chunk_path, "rb") as audio_file:
-            transcription = client.audio.translations.create(
-                model="whisper-1", file=audio_file
-            )
-        full_transcription += transcription.text + "\n"
+            files = {"file": (chunk_path, audio_file, "audio/mpeg")}
+            data = {"model": "whisper-large-v3"}
+
+            response = requests.post(url, headers=headers, files=files, data=data)
+            response.raise_for_status()
+
+            transcription = response.json()
+            full_transcription += transcription.get("text", "") + "\n"
+    # ------------------------------------------
+
     end_time = time.time()
     transcription_time = end_time - start_time
 
